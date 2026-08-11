@@ -60,12 +60,11 @@ Report the summary directly in chat (no file output needed): price and %
 change per ticker, and call out anything that crossed the alert threshold.
 
 ## Watchlist
-34 tickers from the user's TradingView watchlist (ISRG, AAPL, AMZN, GOOGL,
-META, MSFT, NET, NFLX, SNOW, TSLA, ZM, ABNB, ADBE, ADSK, DOCU, CRM, DASH,
-HOOD, LYFT, MDB, NTNX, OKTA, RBLX, PYPL, RDDT, SE, SNAP, SPOT, XYZ, STNE,
-TWLO, TTWO, TDOC, UPST) — edit `WATCHLIST` in `stock_watchlist.py` to add or
-remove tickers. SpaceX ("SPCX" in the user's TradingView UI) is intentionally
-excluded — it's a private company with no public market data.
+176 tickers from the user's TradingView watchlist, grouped by sector as
+commented in `stock_watchlist.py` (software/growth, semis, healthcare,
+airlines/consumer/China, financials/energy) — edit `WATCHLIST` there to add
+or remove tickers. SpaceX ("SPCX" in the user's TradingView UI) is
+intentionally excluded — it's a private company with no public market data.
 
 ## Backtesting & strategy (backtest.py)
 Combines the three indicators into one weighted long-only mean-reversion
@@ -100,6 +99,41 @@ sturdier read than any individual ticker's numbers.
 
 Fetched bars are cached in `.data_cache.json` (gitignored) so repeated
 optimizer runs don't re-hit Yahoo Finance; delete it to force a refresh.
+
+## Out-of-sample validation (backtest_oos.py) — the strategy that's actually in use
+`backtest_oos.py` fits weights/thresholds on 2021-01-01 to 2024-12-31 only
+(across the full 176-ticker WATCHLIST, ~6 years of daily bars per ticker
+fetched via exact `period1`/`period2` date bounds), then evaluates that same
+fitted parameter set - no re-fitting - on 2025-01-01-to-present data. This is
+the honest check of whether a strategy found by `backtest.py`'s optimizer
+generalizes or was just fit to noise in one year.
+
+```bash
+python3 backtest_oos.py --iters 3000       # fetch + optimize on train, evaluate on both windows, save oos_best_params.json
+python3 backtest_oos.py --show             # re-report oos_best_params.json without re-optimizing
+```
+
+**Result as of this writing, and important interpretation**: `oos_best_params.json`
+holds up out-of-sample by the headline numbers (train: 63/167 tickers traded,
+232 pooled trades, 67.7% win rate, profit factor 5.74; test: 156 pooled trades,
+68.6% win rate, profit factor 5.45 - no collapse). But checking the actual
+holding periods revealed **median holding period of 460 trading days on train
+(~1.8 years) and 209 days on test (~10 months)**. This is NOT a short-term
+swing-trading strategy despite being built from indicators normally used that
+way - the optimizer, free to pick any threshold against a median-Sharpe
+objective, converged on "buy once on a moderate KC/RSI-divergence/KDJ
+confluence signal, then hold for months to years until a rare, deep score
+collapse (sell_threshold=-1.54) triggers an exit." Given this watchlist is
+full of names with huge multi-year runs (NVDA +898%, IONQ +759%, CRWD +432%
+on train), a lot of the apparent edge is really "buy quality growth stocks
+near a dip and hold through a strong bull market" - beta exposure from the
+watchlist selection, not proven short-term predictive power from the three
+indicators. **The user has explicitly chosen to keep and use it as a
+dip-buying/long-hold strategy** (not a swing-trading one) - do not describe
+it as short-term or re-optimize toward shorter holds unless the user asks.
+
+Fetched bars for this script are cached separately in `.data_cache_oos.json`
+(gitignored, ~40MB, 176 tickers × ~6 years) so repeat runs don't re-fetch.
 
 ## Validation chart
 `plot_indicators.py [SYMBOL] [output.png]` renders a candlestick chart with
