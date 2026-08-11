@@ -60,12 +60,51 @@ Report the summary directly in chat (no file output needed): price and %
 change per ticker, and call out anything that crossed the alert threshold.
 
 ## Watchlist
-144 tickers from the user's TradingView watchlist, grouped by sector as
-commented in `stock_watchlist.py` (software/growth, semis, healthcare,
-airlines/consumer/China, financials/energy, space/defense/industrials) —
-edit `WATCHLIST` there to add or remove tickers. SpaceX ("SPCX" in the
-user's TradingView UI) is intentionally excluded — it's a private company
-with no public market data.
+207 tickers, grouped by sector/source as commented in `stock_watchlist.py`
+(software/growth, semis, healthcare, airlines/consumer/China,
+financials/energy, space/defense/industrials, Dow 30 + Nasdaq-100) — edit
+`WATCHLIST` there to add or remove tickers. SpaceX ("SPCX" in the user's
+TradingView UI) is intentionally excluded — it's a private company with no
+public market data.
+
+**Dow 30 + Nasdaq-100 additions (2026-08-11)**: added every Dow and
+Nasdaq-100 constituent not already on the list (63 new tickers after the
+$10B filter; SIRI was the only one excluded, at $9.7B). The Dow 30 list is
+verified current (confirmed via search that GOOGL replaced VZ on
+2026-06-29 - the only Dow change since late 2024). **The Nasdaq-100 list is
+best-effort, not independently verified against a live authoritative
+source** - WebFetch is blocked for general domains in this environment
+(only Yahoo Finance is allowlisted; see "Known environment constraint"
+below), and web search couldn't reliably reproduce a full current
+constituent table. It was reconstructed from training-data knowledge plus
+two verified reconstitution events (Dec 22, 2025: +ALNY, FER, INSM, MPWR,
+STX, WDC / −BIIB, CDW, GFS, LULU, ON, TTD; June 22, 2026: +ALAB, CRWV,
+NBIS, RKLB, TER / −CHTR, CTSH, INSM, VRSK, ZS). Treat it as approximate -
+there could be a small number of errors at the margins (recently
+added/removed names this reconstruction missed). To get a verified list,
+add a ticker-list source (e.g. stockanalysis.com) to this environment's
+network allowlist the same way Yahoo Finance was added (see "Known
+environment constraint"), which requires a new session to take effect.
+
+**Market cap floor**: as of 2026-08-11, the watchlist is filtered to
+companies with market cap >= $10B (a one-time cleanup pass, not an ongoing
+daily check - a name's market cap can drift below $10B later without
+getting re-filtered automatically). 30 new tickers were added from an
+updated TradingView screenshot; only 10 survived the filter (NBIS, CRWV,
+ASTS, IREN, LMT, RKLB, AMRZ, CLS, ATI, AES). Across the combined list, 55
+tickers were removed for being under $10B, plus 3 ETFs/funds excluded on
+principle (PPLT, XSW, AIPO - "market cap" doesn't apply the same way to a
+fund, and this watchlist/strategy is built for single-stock signals), plus
+4 tickers that don't resolve to any Yahoo Finance quote at all (VCX, SATS,
+SSSS, SIVE - skipped pending the user providing correct symbols). Market
+cap data comes from `query1.finance.yahoo.com/v7/finance/quote` (needs a
+session cookie + crumb from `fc.yahoo.com` /
+`query1.finance.yahoo.com/v1/test/getcrumb` first - unlike the chart
+endpoint, this one 401s without it). A handful of clearly-large, well-known
+tickers (CRM, SE, MU, WDC, DAL, TGT, NIO, B, and later ADI, HD) came back
+with `marketCap: null` from that endpoint despite resolving fine otherwise
+- treated as passing the filter rather than incorrectly dropped, since
+Yahoo's data gap there is obviously wrong, not a reflection of actual size.
 
 **Market cap floor**: as of 2026-08-11, the watchlist is filtered to
 companies with market cap >= $10B (a one-time cleanup pass, not an ongoing

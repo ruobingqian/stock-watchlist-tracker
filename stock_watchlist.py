@@ -53,6 +53,15 @@ WATCHLIST = [
     # space / defense / industrials (added 2026-08-11, market-cap filtered)
     "NBIS", "CRWV", "ASTS", "IREN", "LMT", "RKLB", "AMRZ", "CLS",
     "ATI", "AES",
+    # Dow 30 + Nasdaq-100 additions (added 2026-08-11, market-cap filtered)
+    "ADI", "ADP", "ALNY", "AZN", "BKNG", "CCEP", "CDNS", "CMCSA",
+    "CPRT", "CSCO", "CSGP", "CSX", "CTAS", "CVX", "DXCM", "EA",
+    "EXC", "FANG", "FAST", "FER", "FTNT", "GEHC", "GOOG", "GS",
+    "HD", "HON", "IBM", "IDXX", "ILMN", "INTU", "KDP", "KHC",
+    "LIN", "MAR", "MCHP", "MDLZ", "MELI", "MMM", "MNST", "MPWR",
+    "MSTR", "NXPI", "ODFL", "ORLY", "PAYX", "PCAR", "PEP", "PG",
+    "REGN", "ROP", "ROST", "SHW", "SNPS", "TEAM", "TER", "TMUS",
+    "TRV", "TXN", "V", "VRTX", "WBD", "WDAY", "XEL",
 ]
 ALERT_THRESHOLD_PCT = 2.0
 
