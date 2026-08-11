@@ -1,0 +1,450 @@
+{
+  "positions": {
+    "ISRG": {
+      "entry_price": 502.2699890136719,
+      "entry_date": "2025-04-14"
+    },
+    "AAPL": {
+      "entry_price": 258.45001220703125,
+      "entry_date": "2026-04-08"
+    },
+    "AMZN": {
+      "entry_price": 183.99000549316406,
+      "entry_date": "2025-04-29"
+    },
+    "GOOGL": {
+      "entry_price": 304.3500061035156,
+      "entry_date": "2026-03-16"
+    },
+    "META": {
+      "entry_price": 624.8900146484375,
+      "entry_date": "2025-03-26"
+    },
+    "MSFT": {
+      "entry_price": 393.1400146484375,
+      "entry_date": "2026-03-03"
+    },
+    "NET": {
+      "entry_price": 186.6199951171875,
+      "entry_date": "2026-02-13"
+    },
+    "NFLX": {
+      "entry_price": 109.20999908447266,
+      "entry_date": "2025-12-02"
+    },
+    "SNOW": {
+      "entry_price": 216.5,
+      "entry_date": "2026-01-12"
+    },
+    "TSLA": {
+      "entry_price": 247.61000061035156,
+      "entry_date": "2025-04-16"
+    },
+    "ZM": {
+      "entry_price": 75.55000305175781,
+      "entry_date": "2025-03-21"
+    },
+    "ADBE": {
+      "entry_price": 361.1000061035156,
+      "entry_date": "2025-09-12"
+    },
+    "ADSK": {
+      "entry_price": 261.7900085449219,
+      "entry_date": "2025-04-16"
+    },
+    "DOCU": {
+      "entry_price": 76.6500015258789,
+      "entry_date": "2025-04-16"
+    },
+    "CRM": {
+      "entry_price": 265.3999938964844,
+      "entry_date": "2025-04-29"
+    },
+    "DASH": {
+      "entry_price": 159.25999450683594,
+      "entry_date": "2026-03-23"
+    },
+    "HOOD": {
+      "entry_price": 45.0099983215332,
+      "entry_date": "2025-04-14"
+    },
+    "LYFT": {
+      "entry_price": 13.510000228881836,
+      "entry_date": "2025-02-21"
+    },
+    "MDB": {
+      "entry_price": 235.40499877929688,
+      "entry_date": "2026-03-03"
+    },
+    "NTNX": {
+      "entry_price": 47.70000076293945,
+      "entry_date": "2025-12-02"
+    },
+    "RBLX": {
+      "entry_price": 81.44999694824219,
+      "entry_date": "2026-01-02"
+    },
+    "SE": {
+      "entry_price": 126.25,
+      "entry_date": "2025-12-26"
+    },
+    "SNAP": {
+      "entry_price": 5.224999904632568,
+      "entry_date": "2026-02-06"
+    },
+    "SPOT": {
+      "entry_price": 523.25,
+      "entry_date": "2026-04-22"
+    },
+    "XYZ": {
+      "entry_price": 54.20000076293945,
+      "entry_date": "2025-04-16"
+    },
+    "STNE": {
+      "entry_price": 8.119999885559082,
+      "entry_date": "2025-01-03"
+    },
+    "TWLO": {
+      "entry_price": 115.4000015258789,
+      "entry_date": "2026-02-25"
+    },
+    "TTWO": {
+      "entry_price": 198.0,
+      "entry_date": "2026-04-01"
+    },
+    "UPST": {
+      "entry_price": 26.299999237060547,
+      "entry_date": "2026-03-20"
+    },
+    "DDOG": {
+      "entry_price": 91.26000213623047,
+      "entry_date": "2025-04-16"
+    },
+    "UBER": {
+      "entry_price": 81.19999694824219,
+      "entry_date": "2025-12-26"
+    },
+    "PLTR": {
+      "entry_price": 148.42999267578125,
+      "entry_date": "2026-03-04"
+    },
+    "DUOL": {
+      "entry_price": 308.0,
+      "entry_date": "2025-09-15"
+    },
+    "BBAI": {
+      "entry_price": 3.1500000953674316,
+      "entry_date": "2025-04-08"
+    },
+    "SHOP": {
+      "entry_price": 144.5500030517578,
+      "entry_date": "2025-09-10"
+    },
+    "CART": {
+      "entry_price": 41.61000061035156,
+      "entry_date": "2025-04-16"
+    },
+    "U": {
+      "entry_price": 17.010000228881836,
+      "entry_date": "2026-02-24"
+    },
+    "ORCL": {
+      "entry_price": 198.05999755859375,
+      "entry_date": "2025-12-26"
+    },
+    "AUR": {
+      "entry_price": 5.239999771118164,
+      "entry_date": "2025-10-20"
+    },
+    "COIN": {
+      "entry_price": 290.4599914550781,
+      "entry_date": "2025-01-22"
+    },
+    "NOW": {
+      "entry_price": 160.44400024414062,
+      "entry_date": "2025-04-14"
+    },
+    "CPNG": {
+      "entry_price": 19.079999923706055,
+      "entry_date": "2026-04-07"
+    },
+    "TTD": {
+      "entry_price": 120.20999908447266,
+      "entry_date": "2025-01-23"
+    },
+    "INTC": {
+      "entry_price": 22.030000686645508,
+      "entry_date": "2025-01-21"
+    },
+    "KEYS": {
+      "entry_price": 168.8000030517578,
+      "entry_date": "2025-01-28"
+    },
+    "SMCI": {
+      "entry_price": 32.93000030517578,
+      "entry_date": "2025-05-08"
+    },
+    "KULR": {
+      "entry_price": 9.4399995803833,
+      "entry_date": "2025-06-13"
+    },
+    "COHR": {
+      "entry_price": 58.849998474121094,
+      "entry_date": "2025-04-14"
+    },
+    "SKM": {
+      "entry_price": 36.400001525878906,
+      "entry_date": "2026-07-27"
+    },
+    "STX": {
+      "entry_price": 848.1300048828125,
+      "entry_date": "2026-08-05"
+    },
+    "ABBV": {
+      "entry_price": 176.00999450683594,
+      "entry_date": "2025-01-30"
+    },
+    "MRNA": {
+      "entry_price": 40.869998931884766,
+      "entry_date": "2025-01-27"
+    },
+    "NVO": {
+      "entry_price": 86.06999969482422,
+      "entry_date": "2025-01-28"
+    },
+    "SDGR": {
+      "entry_price": 21.690000534057617,
+      "entry_date": "2025-07-09"
+    },
+    "GILD": {
+      "entry_price": 103.72000122070312,
+      "entry_date": "2025-05-05"
+    },
+    "VKTX": {
+      "entry_price": 29.450000762939453,
+      "entry_date": "2025-02-11"
+    },
+    "HIMS": {
+      "entry_price": 50.0,
+      "entry_date": "2025-09-10"
+    },
+    "RXRX": {
+      "entry_price": 4.349999904632568,
+      "entry_date": "2025-05-30"
+    },
+    "UNH": {
+      "entry_price": 321.45001220703125,
+      "entry_date": "2025-05-14"
+    },
+    "CRSP": {
+      "entry_price": 54.29999923706055,
+      "entry_date": "2026-01-28"
+    },
+    "AMGN": {
+      "entry_price": 281.1199951171875,
+      "entry_date": "2025-04-29"
+    },
+    "GH": {
+      "entry_price": 90.44999694824219,
+      "entry_date": "2026-04-20"
+    },
+    "NNOX": {
+      "entry_price": 1.6699999570846558,
+      "entry_date": "2026-05-19"
+    },
+    "RXST": {
+      "entry_price": 34.95000076293945,
+      "entry_date": "2025-01-03"
+    },
+    "BNTX": {
+      "entry_price": 97.9800033569336,
+      "entry_date": "2025-09-24"
+    },
+    "AAL": {
+      "entry_price": 9.920000076293945,
+      "entry_date": "2025-04-16"
+    },
+    "BA": {
+      "entry_price": 215.1300048828125,
+      "entry_date": "2025-10-20"
+    },
+    "CCL": {
+      "entry_price": 17.920000076293945,
+      "entry_date": "2025-04-15"
+    },
+    "NCLH": {
+      "entry_price": 25.75,
+      "entry_date": "2025-01-14"
+    },
+    "ALK": {
+      "entry_price": 45.2599983215332,
+      "entry_date": "2025-05-02"
+    },
+    "WMT": {
+      "entry_price": 91.83000183105469,
+      "entry_date": "2025-04-17"
+    },
+    "CMG": {
+      "entry_price": 48.439998626708984,
+      "entry_date": "2025-03-21"
+    },
+    "COST": {
+      "entry_price": 945.739990234375,
+      "entry_date": "2026-07-31"
+    },
+    "DIS": {
+      "entry_price": 104.9800033569336,
+      "entry_date": "2026-02-23"
+    },
+    "MCD": {
+      "entry_price": 303.2699890136719,
+      "entry_date": "2026-04-15"
+    },
+    "T": {
+      "entry_price": 25.440000534057617,
+      "entry_date": "2025-11-12"
+    },
+    "LULU": {
+      "entry_price": 230.6999969482422,
+      "entry_date": "2025-06-20"
+    },
+    "ULTA": {
+      "entry_price": 559.0,
+      "entry_date": "2026-04-20"
+    },
+    "NKE": {
+      "entry_price": 74.5,
+      "entry_date": "2025-02-18"
+    },
+    "SBUX": {
+      "entry_price": 97.8499984741211,
+      "entry_date": "2025-04-01"
+    },
+    "CHWY": {
+      "entry_price": 34.45000076293945,
+      "entry_date": "2025-03-26"
+    },
+    "PLNT": {
+      "entry_price": 90.4000015258789,
+      "entry_date": "2026-02-23"
+    },
+    "CELH": {
+      "entry_price": 41.0,
+      "entry_date": "2025-12-03"
+    },
+    "RSG": {
+      "entry_price": 223.91000366210938,
+      "entry_date": "2025-10-24"
+    },
+    "SG": {
+      "entry_price": 25.700000762939453,
+      "entry_date": "2025-03-12"
+    },
+    "BABA": {
+      "entry_price": 85.0999984741211,
+      "entry_date": "2025-01-03"
+    },
+    "BIDU": {
+      "entry_price": 89.23999786376953,
+      "entry_date": "2025-08-28"
+    },
+    "BILI": {
+      "entry_price": 17.020000457763672,
+      "entry_date": "2026-07-01"
+    },
+    "NTES": {
+      "entry_price": 112.1500015258789,
+      "entry_date": "2026-04-07"
+    },
+    "PDD": {
+      "entry_price": 107.0199966430664,
+      "entry_date": "2026-01-28"
+    },
+    "XPEV": {
+      "entry_price": 19.270000457763672,
+      "entry_date": "2026-03-11"
+    },
+    "NIO": {
+      "entry_price": 4.590000152587891,
+      "entry_date": "2026-01-20"
+    },
+    "AXP": {
+      "entry_price": 255.16000366210938,
+      "entry_date": "2025-04-16"
+    },
+    "JPM": {
+      "entry_price": 237.10000610351562,
+      "entry_date": "2025-04-14"
+    },
+    "KNSL": {
+      "entry_price": 302.7200012207031,
+      "entry_date": "2026-05-12"
+    },
+    "FSLR": {
+      "entry_price": 195.5,
+      "entry_date": "2026-04-06"
+    },
+    "FCX": {
+      "entry_price": 39.709999084472656,
+      "entry_date": "2025-01-14"
+    },
+    "OXY": {
+      "entry_price": 45.79999923706055,
+      "entry_date": "2025-03-13"
+    },
+    "VST": {
+      "entry_price": 117.30999755859375,
+      "entry_date": "2025-04-14"
+    },
+    "OKLO": {
+      "entry_price": 61.93000030517578,
+      "entry_date": "2026-03-03"
+    },
+    "DUK": {
+      "entry_price": 122.38999938964844,
+      "entry_date": "2026-06-09"
+    },
+    "CLF": {
+      "entry_price": 11.100000381469727,
+      "entry_date": "2025-02-12"
+    },
+    "MP": {
+      "entry_price": 19.5,
+      "entry_date": "2025-01-10"
+    },
+    "AEP": {
+      "entry_price": 95.37999725341797,
+      "entry_date": "2025-01-15"
+    },
+    "LYSDY": {
+      "entry_price": 8.380000114440918,
+      "entry_date": "2025-12-26"
+    },
+    "FEAM": {
+      "entry_price": 3.950000047683716,
+      "entry_date": "2025-08-11"
+    },
+    "B": {
+      "entry_price": 37.7599983215332,
+      "entry_date": "2026-07-02"
+    },
+    "NEM": {
+      "entry_price": 93.80000305175781,
+      "entry_date": "2026-07-10"
+    },
+    "SCCO": {
+      "entry_price": 90.90001678466797,
+      "entry_date": "2025-01-10"
+    },
+    "CRCL": {
+      "entry_price": 67.05000305175781,
+      "entry_date": "2026-08-10"
+    },
+    "NNE": {
+      "entry_price": 18.56999969482422,
+      "entry_date": "2026-08-10"
+    }
+  },
+  "trade_log": [],
+  "last_run": "2026-08-10 23:41 EDT"
+}

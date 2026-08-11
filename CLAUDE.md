@@ -135,6 +135,43 @@ it as short-term or re-optimize toward shorter holds unless the user asks.
 Fetched bars for this script are cached separately in `.data_cache_oos.json`
 (gitignored, ~40MB, 176 tickers × ~6 years) so repeat runs don't re-fetch.
 
+## Daily signal check (daily_signal.py) — runs automatically at 1pm PT
+Runs the live strategy (`oos_best_params.json` weights/thresholds) against
+today's data for the full WATCHLIST and reports what changed:
+
+```bash
+python3 daily_signal.py
+```
+
+- **First run ever** (no `holdings.json`): bootstraps current positions from
+  the 2025-present backtest - i.e. for every ticker, "is the strategy
+  currently holding it as of today per the historical signal history, and
+  since when/at what price." This establishes a realistic starting point
+  instead of pretending the strategy starts from all-cash today. A
+  bootstrap run reports the starting positions, not new buy/sell signals.
+- **Every run after that**: fetches each ticker's latest 2 years of daily
+  bars (a fresh fetch, not `.data_cache_oos.json`, since it needs today's
+  bar), computes today's confirmed score, and compares it against the
+  persisted position in `holdings.json`:
+  - flat + score >= buy_threshold -> **BUY** (recorded at today's close;
+    unlike backtest.py's next-bar-open fill, this is a live daily tool with
+    no "tomorrow" to fill at, so today's close is the practical fill price)
+  - long + score <= sell_threshold -> **SELL** (return computed vs. entry
+    price, appended to `trade_log`)
+  - long + no sell signal -> reported as an unrealized-return holding
+  - flat + no buy signal -> not reported (nothing happened)
+- **State persistence is critical**: `holdings.json` must be committed and
+  pushed to the repo after every run. A scheduled trigger may fire into a
+  fresh session/container each time - anything not in git is lost. Do not
+  add `holdings.json` to `.gitignore`.
+- Given how rarely this strategy sells (see the holding-period finding
+  above), expect most daily runs to show few or zero new BUY/SELL signals
+  and a large, slow-changing holdings table - that's the strategy working
+  as intended, not a bug.
+- Scheduled via a daily Routine at 1pm PT / 4pm ET (US market close), so the
+  day's final bar is available. Report the day's BUY/SELL signals and the
+  current holdings table (sorted by unrealized return) directly in chat.
+
 ## Validation chart
 `plot_indicators.py [SYMBOL] [output.png]` renders a candlestick chart with
 Keltner Channel overlay plus RSI Divergence and KDJ subpanels, styled after
