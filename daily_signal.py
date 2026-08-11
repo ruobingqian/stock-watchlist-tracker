@@ -20,7 +20,7 @@ Usage: python3 daily_signal.py
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from backtest import build_rsi_raw, compute_raw_components
@@ -31,6 +31,12 @@ from stock_watchlist import WATCHLIST
 HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS_PATH = os.path.join(HERE, "oos_best_params.json")
 HOLDINGS_PATH = os.path.join(HERE, "holdings.json")
+
+MAX_HOLD_DAYS = 90  # ~3 months - positions are force-closed past this age regardless of the sell threshold
+
+
+def parse_date(s: str) -> date:
+    return datetime.strptime(s, "%Y-%m-%d").date()
 
 
 def load_holdings() -> dict:
@@ -77,7 +83,9 @@ def determine_current_position(comp: dict, weights, buy_th: float, sell_th: floa
 def bootstrap_positions(weights, buy_th: float, sell_th: float, persist_days: int) -> dict:
     print("No holdings.json found - bootstrapping from the 2025-present backtest...", file=sys.stderr)
     raw = load_all_bars(WATCHLIST)  # reuses .data_cache_oos.json if present
+    today = datetime.now(ZoneInfo("America/New_York")).date()
     positions = {}
+    skipped_stale = 0
     for sym, (meta, bars) in raw.items():
         comp = compute_split_components(meta, bars)
         if comp is None:
@@ -89,7 +97,12 @@ def bootstrap_positions(weights, buy_th: float, sell_th: float, persist_days: in
         entry_bars = drop_incomplete_last_bar(meta, bars)
         tz = ZoneInfo(meta.get("exchangeTimezoneName") or "America/New_York")
         entry_date = datetime.fromtimestamp(entry_bars[pos["entry_bar"]]["time"], tz).strftime("%Y-%m-%d")
+        if (today - parse_date(entry_date)).days > MAX_HOLD_DAYS:
+            skipped_stale += 1
+            continue
         positions[sym] = {"entry_price": pos["entry_price"], "entry_date": entry_date}
+    if skipped_stale:
+        print(f"Skipped {skipped_stale} position(s) whose buy signal is older than {MAX_HOLD_DAYS} days", file=sys.stderr)
     return positions
 
 
@@ -132,20 +145,25 @@ def main():
                 buys.append({"symbol": symbol, "price": price, "score": round(score, 3), "date": bar_date})
         else:
             unrealized_pct = (price / pos["entry_price"] - 1) * 100
-            if not bootstrapped and score <= sell_th:
+            held_days = (parse_date(bar_date) - parse_date(pos["entry_date"])).days
+            expired = held_days > MAX_HOLD_DAYS
+            if not bootstrapped and (expired or score <= sell_th):
+                reason = "max_hold_expired" if expired else "sell_signal"
                 sells.append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "exit_price": price, "exit_date": bar_date, "return_pct": round(unrealized_pct, 2),
+                    "held_days": held_days, "reason": reason,
                 })
                 state["trade_log"].append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "exit_price": price, "exit_date": bar_date, "return_pct": round(unrealized_pct, 2),
+                    "held_days": held_days, "reason": reason,
                 })
                 del positions[symbol]
             else:
                 holding_updates.append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
-                    "current_price": price, "unrealized_pct": round(unrealized_pct, 2),
+                    "current_price": price, "unrealized_pct": round(unrealized_pct, 2), "held_days": held_days,
                 })
 
     state["last_run"] = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M %Z")
@@ -163,12 +181,18 @@ def main():
             print(f"  {b['symbol']:<6} entered @ ${b['price']:.2f}  score={b['score']}")
         print(f"\nSELL signals today ({len(sells)}):")
         for s in sells:
-            print(f"  {s['symbol']:<6} exited @ ${s['exit_price']:.2f}  return={s['return_pct']:+.2f}%  (held since {s['entry_date']})")
+            print(
+                f"  {s['symbol']:<6} exited @ ${s['exit_price']:.2f}  return={s['return_pct']:+.2f}%  "
+                f"(held {s['held_days']}d since {s['entry_date']}, reason={s['reason']})"
+            )
 
     holding_updates.sort(key=lambda h: h["unrealized_pct"], reverse=True)
-    print(f"\nCurrent holdings ({len(holding_updates)}):")
+    print(f"\nCurrent holdings ({len(holding_updates)}, max hold {MAX_HOLD_DAYS}d):")
     for h in holding_updates:
-        print(f"  {h['symbol']:<6} ${h['entry_price']:.2f} -> ${h['current_price']:.2f}  {h['unrealized_pct']:+.2f}%  (since {h['entry_date']})")
+        print(
+            f"  {h['symbol']:<6} ${h['entry_price']:.2f} -> ${h['current_price']:.2f}  "
+            f"{h['unrealized_pct']:+.2f}%  (since {h['entry_date']}, {h['held_days']}d)"
+        )
 
     if errors:
         print(f"\nErrors ({len(errors)}): " + "; ".join(errors[:10]))

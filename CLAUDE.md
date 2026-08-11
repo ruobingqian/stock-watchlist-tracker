@@ -156,10 +156,20 @@ python3 daily_signal.py
   - flat + score >= buy_threshold -> **BUY** (recorded at today's close;
     unlike backtest.py's next-bar-open fill, this is a live daily tool with
     no "tomorrow" to fill at, so today's close is the practical fill price)
-  - long + score <= sell_threshold -> **SELL** (return computed vs. entry
-    price, appended to `trade_log`)
-  - long + no sell signal -> reported as an unrealized-return holding
+  - long + score <= sell_threshold -> **SELL**, reason `sell_signal`
+  - long + held longer than `MAX_HOLD_DAYS` (90 calendar days / ~3 months,
+    a user-requested cap - not part of `oos_best_params.json`'s fitted
+    parameters) -> **SELL** regardless of score, reason `max_hold_expired`.
+    This checks before the score-based sell, so a stale position always
+    exits even if its score never crosses `sell_threshold`
+  - long + no sell signal and not stale -> reported as an unrealized-return
+    holding
   - flat + no buy signal -> not reported (nothing happened)
+  - Adding this cap on 2026-08-11 immediately force-closed 100 of the 111
+    bootstrapped positions that were already older than 90 days (median
+    prior hold was ~460 trading days, so most of the book was stale by
+    construction) - expect a similar one-time cleanup if `MAX_HOLD_DAYS` is
+    ever tightened further
 - **State persistence is critical**: `holdings.json` must be committed and
   pushed to the repo after every run. A scheduled trigger may fire into a
   fresh session/container each time - anything not in git is lost. Do not
