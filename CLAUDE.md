@@ -209,15 +209,17 @@ today's data for the full WATCHLIST and reports what changed:
 python3 daily_signal.py
 ```
 
-- **First run ever** (no `holdings.json`): bootstraps current positions from
-  the 2025-present backtest - i.e. for every ticker, "is the strategy
+- **Any WATCHLIST ticker not yet in `holdings.json`'s `seen_tickers`** (the
+  very first run ever, or a ticker added to WATCHLIST since the last run):
+  bootstrapped from the 2025-present backtest - i.e. "is the strategy
   currently holding it as of today per the historical signal history, and
   since when/at what price." **Only positions whose buy signal is within
   the last `MAX_HOLD_DAYS` (90 calendar days / ~3 months) are included** -
   this was a user request to start with a smaller, more recent set of
   holdings rather than everything the strategy has ever bought and never
-  sold. This filter applies ONLY at bootstrap time. A bootstrap run reports
-  the starting positions, not new buy/sell signals.
+  sold. This filter applies ONLY at bootstrap time, per ticker, once. A
+  ticker's bootstrap result (position or no position) is reported, but it
+  doesn't also get a live buy/sell check on the same run it was bootstrapped.
 - **Every run after that**: fetches each ticker's latest 2 years of daily
   bars (a fresh fetch, not `.data_cache_oos.json`, since it needs today's
   bar), computes today's confirmed score, and compares it against the
@@ -247,7 +249,22 @@ python3 daily_signal.py
   as intended, not a bug.
 - Scheduled via a daily Routine at 1pm PT / 4pm ET (US market close), so the
   day's final bar is available. Report the day's BUY/SELL signals and the
-  current holdings table (sorted by unrealized return) directly in chat.
+  current holdings table (sorted by unrealized return) directly in chat,
+  **and generate + send a chart per current holding** (see below) - this is
+  part of the standard daily report per user request, not optional.
+
+## Per-holding charts (holding_charts.py) — part of the daily report
+```bash
+python3 holding_charts.py [output_dir]   # defaults to /tmp/holding_charts
+```
+Renders one 4-panel PNG per symbol currently in `holdings.json`'s
+`positions`: price candles + Keltner Channel overlay (with the actual BUY
+entry marked at its real price/date) on top, then RSI Divergence, then
+KDJ, then the combined weighted score vs. buy/sell thresholds (same score
+panel as `strategy_chart.py`) at the bottom - so it's visible both what the
+chart looks like AND why the strategy is (or isn't) about to exit. Send
+these via `SendUserFile` as part of every daily report, one call with all
+the current holdings' charts (not one call per file - that's noisy).
 
 ## Validation chart
 `plot_indicators.py [SYMBOL] [output.png]` renders a candlestick chart with
