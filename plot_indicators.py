@@ -15,55 +15,28 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from stock_watchlist import (
+from indicators import (
     KC_ATR_LENGTH,
     KC_LENGTH,
     KC_MULTIPLIER,
     KDJ_PERIOD,
     KDJ_SIGNAL,
-    RSI_MAX_RANGE,
-    RSI_MIN_RANGE,
     RSI_PERIOD,
-    RSI_PIVOT_LEFT,
-    RSI_PIVOT_RIGHT,
     drop_incomplete_last_bar,
     ema,
     fetch_history,
-    find_pivots,
+    kdj_series,
     rma,
     rsi,
+    rsi_divergence_pairs,
     true_range,
 )
 
 
-def kdj_series(bars: list[dict]):
-    n = len(bars)
-    k_series: list[float | None] = [None] * n
-    d_series: list[float | None] = [None] * n
-    j_series: list[float | None] = [None] * n
-    k_val = d_val = 50.0
-    for i in range(KDJ_PERIOD - 1, n):
-        window = bars[i - KDJ_PERIOD + 1 : i + 1]
-        hh = max(b["high"] for b in window)
-        ll = min(b["low"] for b in window)
-        rsv = 50.0 if hh == ll else (bars[i]["close"] - ll) / (hh - ll) * 100
-        k_val += (rsv - k_val) / KDJ_SIGNAL
-        d_val += (k_val - d_val) / KDJ_SIGNAL
-        k_series[i], d_series[i], j_series[i] = k_val, d_val, 3 * k_val - 2 * d_val
-    return k_series, d_series, j_series
-
-
 def divergence_pairs(rsi_vals: list[float | None], bars: list[dict]):
-    pivots = find_pivots(rsi_vals, RSI_PIVOT_LEFT, RSI_PIVOT_RIGHT)
-    lows = [p for p in pivots if p[2] == "L"]
-    highs = [p for p in pivots if p[2] == "H"]
-    bull_pairs, bear_pairs = [], []
-    for (i1, r1, _), (i2, r2, _) in zip(lows, lows[1:]):
-        if RSI_MIN_RANGE <= (i2 - i1) <= RSI_MAX_RANGE and r2 > r1 and bars[i2]["low"] < bars[i1]["low"]:
-            bull_pairs.append((i1, r1, i2, r2))
-    for (i1, r1, _), (i2, r2, _) in zip(highs, highs[1:]):
-        if RSI_MIN_RANGE <= (i2 - i1) <= RSI_MAX_RANGE and r2 < r1 and bars[i2]["high"] > bars[i1]["high"]:
-            bear_pairs.append((i1, r1, i2, r2))
+    pairs = rsi_divergence_pairs(rsi_vals, bars)
+    bull_pairs = [(i1, rsi_vals[i1], i2, rsi_vals[i2]) for i1, i2, kind in pairs if kind == "bullish"]
+    bear_pairs = [(i1, rsi_vals[i1], i2, rsi_vals[i2]) for i1, i2, kind in pairs if kind == "bearish"]
     return bull_pairs, bear_pairs
 
 
