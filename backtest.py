@@ -94,12 +94,11 @@ def load_all_bars(tickers: list[str]) -> dict[str, tuple[dict, list[dict]]]:
 
 # ------------------------------------------------------- signal components -
 
-def compute_components(meta: dict, bars: list[dict]) -> dict | None:
-    bars = drop_incomplete_last_bar(meta, bars)
+def compute_raw_components(bars: list[dict]) -> dict:
+    """Signal arrays over the FULL bar series (no train/test or rolling-window
+    slicing) - shared by compute_components() (rolling 1y live window) and
+    backtest_oos.py (fixed train/test date ranges)."""
     n = len(bars)
-    if n < 120:
-        return None
-
     closes = [b["close"] for b in bars]
     opens = [b["open"] for b in bars]
     upper, basis, lower = keltner_series(bars)
@@ -124,19 +123,22 @@ def compute_components(meta: dict, bars: list[dict]) -> dict | None:
         if confirm_bar < n:
             events.append((confirm_bar, 1.0 if kind == "bullish" else -1.0))
 
+    return {"closes": closes, "opens": opens, "kc_raw": kc_raw, "kdj_raw": kdj_raw, "events": events, "n": n}
+
+
+def compute_components(meta: dict, bars: list[dict]) -> dict | None:
+    bars = drop_incomplete_last_bar(meta, bars)
+    n = len(bars)
+    if n < 120:
+        return None
+
+    raw = compute_raw_components(bars)
+
     tz = ZoneInfo(meta.get("exchangeTimezoneName") or "America/New_York")
     dates = [datetime.fromtimestamp(b["time"], tz) for b in bars]
     start_idx = next(i for i, d in enumerate(dates) if (dates[-1] - d).days <= BACKTEST_DAYS)
 
-    return {
-        "closes": closes,
-        "opens": opens,
-        "kc_raw": kc_raw,
-        "kdj_raw": kdj_raw,
-        "events": events,
-        "start_idx": start_idx,
-        "n": n,
-    }
+    return {**raw, "start_idx": start_idx}
 
 
 def build_rsi_raw(n: int, events: list[tuple[int, float]], persist_days: int) -> list[float]:

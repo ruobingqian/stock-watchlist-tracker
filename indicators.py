@@ -27,13 +27,20 @@ CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 
-def fetch_history(symbol: str, rng: str = "1y", interval: str = "1d"):
-    resp = requests.get(
-        CHART_URL.format(symbol=symbol),
-        headers=HEADERS,
-        params={"range": rng, "interval": interval},
-        timeout=15,
-    )
+def fetch_history(
+    symbol: str,
+    rng: str = "1y",
+    interval: str = "1d",
+    period1: int | None = None,
+    period2: int | None = None,
+):
+    """period1/period2 (unix seconds) give an exact date range and take
+    precedence over rng when both would otherwise apply."""
+    params = {"period1": period1, "period2": period2, "interval": interval} if period1 is not None else {
+        "range": rng,
+        "interval": interval,
+    }
+    resp = requests.get(CHART_URL.format(symbol=symbol), headers=HEADERS, params=params, timeout=15)
     resp.raise_for_status()
     result = resp.json()["chart"]["result"][0]
     meta = result["meta"]

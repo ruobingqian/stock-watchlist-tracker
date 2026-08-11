@@ -25,10 +25,33 @@ from indicators import (
 )
 
 WATCHLIST = [
+    # original tech/growth watchlist
     "ISRG", "AAPL", "AMZN", "GOOGL", "META", "MSFT", "NET", "NFLX", "SNOW", "TSLA",
     "ZM", "ABNB", "ADBE", "ADSK", "DOCU", "CRM", "DASH", "HOOD", "LYFT", "MDB",
     "NTNX", "OKTA", "RBLX", "PYPL", "RDDT", "SE", "SNAP", "SPOT", "XYZ", "STNE",
     "TWLO", "TTWO", "TDOC", "UPST",
+    # software / internet
+    "DDOG", "CRWD", "UBER", "PLTR", "DUOL", "TEM", "BBAI", "APP", "GCT", "SHOP",
+    "CART", "CRCL", "U", "RUM", "ORCL", "AUR", "COIN", "EBAY", "NOW", "PANW",
+    "CPNG", "TTD", "IONQ",
+    # semiconductors / hardware
+    "AMD", "INTC", "KEYS", "KLAC", "MU", "NVDA", "SMCI", "TSM", "AMAT", "ASML",
+    "AVGO", "ARM", "QCOM", "MRVL", "KULR", "ALAB", "SNDK", "LITE", "WDC", "COHR",
+    "LRCX", "GLW", "SKM", "SKYT", "UMC", "CIEN", "MXL", "STX", "LWLG", "VPG",
+    "CRDO", "DELL",
+    # healthcare / pharma
+    "ABBV", "JNJ", "LLY", "MRK", "MRNA", "NVO", "PFE", "SDGR", "GILD", "VKTX",
+    "HIMS", "RXRX", "UNH", "CBLL", "CRSP", "AMGN", "GH", "NNOX", "RXST", "RVMD",
+    "INCY", "BNTX",
+    # airlines / consumer / china
+    "AAL", "BA", "CCL", "DAL", "UAL", "NCLH", "ALK", "WMT", "CMG", "COST", "DIS",
+    "KO", "MCD", "T", "LULU", "ULTA", "NKE", "SBUX", "TGT", "CHWY", "PLNT", "CELH",
+    "RSG", "SG", "BABA", "BIDU", "BILI", "NTES", "PDD", "XPEV", "NIO", "HDL",
+    # financials / energy & minerals
+    "AXP", "JPM", "KNSL", "BAC", "FSLR", "FCX", "OXY", "RIO", "BHP", "TRGP", "VST",
+    "OKLO", "DUK", "GEV", "NNE", "CLF", "MP", "USAR", "AEP", "LYSDY", "PLUG",
+    "FEAM", "BKR", "CAT", "B", "XOM", "NEM", "ALB", "BE", "DNN", "CEG", "NEE",
+    "SCCO",
 ]
 ALERT_THRESHOLD_PCT = 2.0
 

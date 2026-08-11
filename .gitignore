@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 .venv/
 .data_cache.json
+.data_cache_oos.json
