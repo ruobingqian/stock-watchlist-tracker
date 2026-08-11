@@ -266,6 +266,25 @@ chart looks like AND why the strategy is (or isn't) about to exit. Send
 these via `SendUserFile` as part of every daily report, one call with all
 the current holdings' charts (not one call per file - that's noisy).
 
+## Keltner Channel bottom-band screener (kc_bottom_screener.py) — also part of the daily report
+```bash
+python3 kc_bottom_screener.py [output_dir]   # defaults to /tmp/kc_bottom_hits
+```
+Standalone, single-purpose script - deliberately does NOT touch
+`holdings.json` or any strategy/position state, and is independent of
+`oos_best_params.json`'s buy/sell thresholds. Scans the full WATCHLIST for
+tickers whose latest confirmed close is at or below their Keltner Channel
+lower band (a much looser bar than the full weighted-score buy signal —
+this is a raw band-touch screen, not a trade signal), and renders the
+same 4-panel chart as `holding_charts.py` for each hit via
+`holding_charts.chart_one()` (reused with `marker_label="KC bottom hit"` -
+`chart_one()` takes an optional `marker_label` param, default `"BUY
+(entry)"`, precisely so this script didn't need to duplicate the ~150-line
+chart function). Most days this finds very few hits, sometimes zero - that's
+expected, not a bug. Run daily alongside `daily_signal.py` and
+`holding_charts.py`; report the list of hits (or "no hits today") and send
+the charts via `SendUserFile`, separate from the holdings charts.
+
 ## Validation chart
 `plot_indicators.py [SYMBOL] [output.png]` renders a candlestick chart with
 Keltner Channel overlay plus RSI Divergence and KDJ subpanels, styled after
