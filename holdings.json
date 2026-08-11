@@ -63,6 +63,18 @@
     "ASTS": {
       "entry_price": 68.76000213623047,
       "entry_date": "2026-08-10"
+    },
+    "MPWR": {
+      "entry_price": 1381.0999755859375,
+      "entry_date": "2026-08-10"
+    },
+    "MSTR": {
+      "entry_price": 97.33000183105469,
+      "entry_date": "2026-08-10"
+    },
+    "TMUS": {
+      "entry_price": 178.1999969482422,
+      "entry_date": "2026-08-10"
     }
   },
   "trade_log": [
@@ -117,7 +129,7 @@
       "reason": "below_market_cap_threshold"
     }
   ],
-  "last_run": "2026-08-11 00:53 EDT",
+  "last_run": "2026-08-11 01:22 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
