@@ -5,10 +5,14 @@ chose to keep and use, see CLAUDE.md). Meant to run once per trading day at
 market close (1pm PT / 4pm ET).
 
 Maintains persistent state in holdings.json: which tickers are currently
-"long" (with entry price/date) vs flat, and a running trade log. On first
-run (no holdings.json yet), bootstraps state from what the strategy would
-already be holding today per the 2025-present out-of-sample backtest -
-after that, each run only advances by the newest bar.
+"long" (with entry price/date) vs flat, a running trade log, and the set of
+tickers that have ever been evaluated ("seen_tickers"). Any WATCHLIST ticker
+not yet in seen_tickers - whether this is the very first run ever, or the
+watchlist just grew - gets bootstrapped from the 2025-present backtest: "is
+the strategy currently holding it today per the historical signal history,
+and since when/at what price," filtered to buy signals within the last
+MAX_HOLD_DAYS (so the starting set doesn't include very old/stale signals).
+After bootstrapping, a ticker moves to normal day-to-day tracking.
 
 IMPORTANT: holdings.json must be committed and pushed after every run - a
 scheduled trigger may fire into a fresh session/container each time, and
@@ -32,9 +36,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS_PATH = os.path.join(HERE, "oos_best_params.json")
 HOLDINGS_PATH = os.path.join(HERE, "holdings.json")
 
-MAX_HOLD_DAYS = 90  # ~3 months - only affects which positions the INITIAL holding set includes
-                    # (bootstrap skips buy signals older than this). Once a position is bootstrapped
-                    # or bought, it's held indefinitely until a genuine sell signal - no forced exit.
+MAX_HOLD_DAYS = 90  # ~3 months - only affects which positions the INITIAL/bootstrap holding set
+                    # includes for a given ticker. Once a position is bootstrapped or bought, it's
+                    # held indefinitely until a genuine sell signal - no forced exit.
 
 
 def parse_date(s: str) -> date:
@@ -44,8 +48,10 @@ def parse_date(s: str) -> date:
 def load_holdings() -> dict:
     if os.path.exists(HOLDINGS_PATH):
         with open(HOLDINGS_PATH) as f:
-            return json.load(f)
-    return {"positions": {}, "trade_log": [], "last_run": None}
+            state = json.load(f)
+        state.setdefault("seen_tickers", [])
+        return state
+    return {"positions": {}, "trade_log": [], "last_run": None, "seen_tickers": []}
 
 
 def save_holdings(state: dict) -> None:
@@ -82,9 +88,8 @@ def determine_current_position(comp: dict, weights, buy_th: float, sell_th: floa
     return {"entry_price": entry_price, "entry_bar": entry_bar} if position else None
 
 
-def bootstrap_positions(weights, buy_th: float, sell_th: float, persist_days: int) -> dict:
-    print("No holdings.json found - bootstrapping from the 2025-present backtest...", file=sys.stderr)
-    raw = load_all_bars(WATCHLIST)  # reuses .data_cache_oos.json if present
+def bootstrap_positions(tickers: list[str], weights, buy_th: float, sell_th: float, persist_days: int) -> dict:
+    raw = load_all_bars(tickers)  # reuses .data_cache_oos.json if present
     today = datetime.now(ZoneInfo("America/New_York")).date()
     positions = {}
     skipped_stale = 0
@@ -104,7 +109,7 @@ def bootstrap_positions(weights, buy_th: float, sell_th: float, persist_days: in
             continue
         positions[sym] = {"entry_price": pos["entry_price"], "entry_date": entry_date}
     if skipped_stale:
-        print(f"Skipped {skipped_stale} position(s) whose buy signal is older than {MAX_HOLD_DAYS} days", file=sys.stderr)
+        print(f"  skipped {skipped_stale} position(s) whose buy signal is older than {MAX_HOLD_DAYS} days", file=sys.stderr)
     return positions
 
 
@@ -115,13 +120,18 @@ def main():
     buy_th, sell_th, persist_days = params["buy_threshold"], params["sell_threshold"], params["persist_days"]
 
     state = load_holdings()
-    bootstrapped = False
-    if not state["positions"] and state["last_run"] is None:
-        state["positions"] = bootstrap_positions(weights, buy_th, sell_th, persist_days)
-        bootstrapped = True
-
     positions = state["positions"]
+    seen = set(state["seen_tickers"])
+
+    to_bootstrap = [t for t in WATCHLIST if t not in seen]
+    bootstrapped_positions = {}
+    if to_bootstrap:
+        print(f"Bootstrapping {len(to_bootstrap)} newly-seen ticker(s) from the 2025-present backtest...", file=sys.stderr)
+        bootstrapped_positions = bootstrap_positions(to_bootstrap, weights, buy_th, sell_th, persist_days)
+        positions.update(bootstrapped_positions)
+
     buys, sells, holding_updates, errors = [], [], [], []
+    bootstrapped_this_run = set(to_bootstrap)
 
     for symbol in WATCHLIST:
         try:
@@ -141,14 +151,16 @@ def main():
         bar_date = datetime.fromtimestamp(bars[-1]["time"], tz).strftime("%Y-%m-%d")
 
         pos = positions.get(symbol)
+        just_bootstrapped = symbol in bootstrapped_this_run
+
         if pos is None:
-            if not bootstrapped and score >= buy_th:
+            if not just_bootstrapped and score >= buy_th:
                 positions[symbol] = {"entry_price": price, "entry_date": bar_date}
                 buys.append({"symbol": symbol, "price": price, "score": round(score, 3), "date": bar_date})
         else:
             unrealized_pct = (price / pos["entry_price"] - 1) * 100
             held_days = (parse_date(bar_date) - parse_date(pos["entry_date"])).days
-            if not bootstrapped and score <= sell_th:
+            if not just_bootstrapped and score <= sell_th:
                 sells.append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "exit_price": price, "exit_date": bar_date, "return_pct": round(unrealized_pct, 2),
@@ -164,34 +176,38 @@ def main():
                 holding_updates.append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "current_price": price, "unrealized_pct": round(unrealized_pct, 2), "held_days": held_days,
+                    "bootstrapped": just_bootstrapped,
                 })
 
+    state["seen_tickers"] = sorted(set(state["seen_tickers"]) | set(WATCHLIST))
     state["last_run"] = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M %Z")
     save_holdings(state)
 
     print(f"=== Daily signal check — {state['last_run']} ===\n")
-    if bootstrapped:
-        print(f"Bootstrapped {len(positions)} open position(s) from the 2025-present backtest (no buy/sell fired today - today only establishes the starting state):\n")
-        for sym, p in sorted(positions.items()):
+
+    if bootstrapped_positions:
+        print(f"Bootstrapped {len(bootstrapped_positions)} new open position(s) from history:")
+        for sym, p in sorted(bootstrapped_positions.items()):
             print(f"  {sym:<6} entered {p['entry_date']} @ ${p['entry_price']:.2f}")
         print()
-    else:
-        print(f"BUY signals today ({len(buys)}):")
-        for b in buys:
-            print(f"  {b['symbol']:<6} entered @ ${b['price']:.2f}  score={b['score']}")
-        print(f"\nSELL signals today ({len(sells)}):")
-        for s in sells:
-            print(
-                f"  {s['symbol']:<6} exited @ ${s['exit_price']:.2f}  return={s['return_pct']:+.2f}%  "
-                f"(held {s['held_days']}d since {s['entry_date']})"
-            )
+
+    print(f"BUY signals today ({len(buys)}):")
+    for b in buys:
+        print(f"  {b['symbol']:<6} entered @ ${b['price']:.2f}  score={b['score']}")
+    print(f"\nSELL signals today ({len(sells)}):")
+    for s in sells:
+        print(
+            f"  {s['symbol']:<6} exited @ ${s['exit_price']:.2f}  return={s['return_pct']:+.2f}%  "
+            f"(held {s['held_days']}d since {s['entry_date']})"
+        )
 
     holding_updates.sort(key=lambda h: h["unrealized_pct"], reverse=True)
     print(f"\nCurrent holdings ({len(holding_updates)}):")
     for h in holding_updates:
+        tag = " [new]" if h["bootstrapped"] else ""
         print(
             f"  {h['symbol']:<6} ${h['entry_price']:.2f} -> ${h['current_price']:.2f}  "
-            f"{h['unrealized_pct']:+.2f}%  (since {h['entry_date']}, {h['held_days']}d)"
+            f"{h['unrealized_pct']:+.2f}%  (since {h['entry_date']}, {h['held_days']}d){tag}"
         )
 
     if errors:
