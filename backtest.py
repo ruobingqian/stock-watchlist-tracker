@@ -160,6 +160,7 @@ def simulate(comp: dict, weights: tuple[float, float, float], buy_th: float, sel
     entry_price = None
     trades = []
     equity_curve = []
+    buy_bars, sell_bars = [], []
     pending = None
 
     for i in range(comp["start_idx"], comp["n"]):
@@ -168,11 +169,13 @@ def simulate(comp: dict, weights: tuple[float, float, float], buy_th: float, sel
             cash = 0.0
             position = True
             entry_price = opens[i]
+            buy_bars.append(i)
         elif pending == "sell" and position:
             cash = shares * opens[i] * (1 - TRANSACTION_COST)
             trades.append(opens[i] / entry_price - 1)
             shares = 0.0
             position = False
+            sell_bars.append(i)
         pending = None
 
         equity_curve.append(cash + shares * closes[i])
@@ -187,8 +190,9 @@ def simulate(comp: dict, weights: tuple[float, float, float], buy_th: float, sel
         final_cash = shares * closes[-1] * (1 - TRANSACTION_COST)
         trades.append(closes[-1] / entry_price - 1)
         equity_curve[-1] = final_cash
+        sell_bars.append(comp["n"] - 1)
 
-    return equity_curve, trades
+    return equity_curve, trades, buy_bars, sell_bars
 
 
 def compute_metrics(equity_curve: list[float], trades: list[float]) -> dict:
@@ -219,7 +223,7 @@ def compute_metrics(equity_curve: list[float], trades: list[float]) -> dict:
 def backtest_all(all_components: dict[str, dict], weights, buy_th, sell_th, persist_days) -> dict[str, dict]:
     results = {}
     for sym, comp in all_components.items():
-        equity_curve, trades = simulate(comp, weights, buy_th, sell_th, persist_days)
+        equity_curve, trades, _, _ = simulate(comp, weights, buy_th, sell_th, persist_days)
         results[sym] = compute_metrics(equity_curve, trades)
     return results
 
@@ -265,7 +269,7 @@ def print_report(all_components: dict[str, dict], params: dict) -> dict[str, dic
     results = {}
     all_trades = []
     for sym, comp in all_components.items():
-        equity_curve, trades = simulate(comp, weights, params["buy_threshold"], params["sell_threshold"], params["persist_days"])
+        equity_curve, trades, _, _ = simulate(comp, weights, params["buy_threshold"], params["sell_threshold"], params["persist_days"])
         results[sym] = compute_metrics(equity_curve, trades)
         all_trades.extend(trades)
 
