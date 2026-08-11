@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
-"""Daily watchlist summary using Yahoo Finance (via yfinance)."""
+"""Daily watchlist summary using Yahoo Finance's public chart API."""
 
 import sys
 from datetime import datetime
 
-import yfinance as yf
+import requests
 
 WATCHLIST = ["META", "ISRG", "GOOGL", "AAPL", "SPY", "QQQ"]
 ALERT_THRESHOLD_PCT = 2.0
 
+CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+HEADERS = {"User-Agent": "Mozilla/5.0"}
+
 
 def fetch_quote(symbol: str) -> dict:
-    info = yf.Ticker(symbol).fast_info
-    last_price = info["lastPrice"]
-    prev_close = info["previousClose"]
+    resp = requests.get(CHART_URL.format(symbol=symbol), headers=HEADERS, timeout=15)
+    resp.raise_for_status()
+    meta = resp.json()["chart"]["result"][0]["meta"]
+
+    last_price = meta["regularMarketPrice"]
+    prev_close = meta["previousClose"]
     change = last_price - prev_close
     pct_change = (change / prev_close) * 100 if prev_close else 0.0
     return {
@@ -22,9 +28,9 @@ def fetch_quote(symbol: str) -> dict:
         "prev_close": prev_close,
         "change": change,
         "pct_change": pct_change,
-        "day_low": info.get("dayLow"),
-        "day_high": info.get("dayHigh"),
-        "volume": info.get("lastVolume"),
+        "day_low": meta.get("regularMarketDayLow"),
+        "day_high": meta.get("regularMarketDayHigh"),
+        "volume": meta.get("regularMarketVolume"),
     }
 
 

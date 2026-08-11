@@ -1,9 +1,10 @@
 # Stock Watchlist Tracker — Run Instructions
 
 ## What this repo does
-Pulls near-real-time quote data (via Yahoo Finance / `yfinance`) for a fixed
-watchlist of tickers and prints a daily summary: last price, $ and % change
-vs. previous close, day range, and volume. Flags any ticker whose move since
+Pulls near-real-time quote data (via Yahoo Finance's public chart API,
+`query1.finance.yahoo.com/v8/finance/chart/{symbol}`) for a fixed watchlist
+of tickers and prints a daily summary: last price, $ and % change vs.
+previous close, day range, and volume. Flags any ticker whose move since
 previous close exceeds the alert threshold.
 
 ## How to run
@@ -22,7 +23,10 @@ marked `[ALERT]`.
 
 ## Script behavior (do not change)
 - `stock_watchlist.py` contains all fetch/format logic — run as-is
-- Data source: Yahoo Finance via the `yfinance` package (`Ticker.fast_info`)
+- Data source: Yahoo Finance's public chart API, called directly via `requests`
+  (NOT the `yfinance` package — its `curl_cffi`-based browser-TLS-fingerprint
+  spoofing gets reset by this environment's TLS-intercepting proxy; plain
+  `requests` works fine against the same API)
 - Watchlist: `WATCHLIST` constant at the top of the script
 - Alert threshold: `ALERT_THRESHOLD_PCT` constant (default 2.0%)
 
@@ -35,9 +39,8 @@ META, ISRG, GOOGL, AAPL, SPY, QQQ — edit `WATCHLIST` in `stock_watchlist.py`
 to add or remove tickers.
 
 ## Known environment constraint
-Yahoo Finance (`fc.yahoo.com`, `query1/query2.finance.yahoo.com`) must be
-reachable from wherever this runs. In a Claude Code on the web environment
-with a restricted network policy, these hosts need to be added to the
-environment's egress allowlist before this script will work — see
-https://code.claude.com/docs/en/claude-code-on-the-web for how environment
-network policies are configured.
+`query1.finance.yahoo.com` must be reachable from wherever this runs. In a
+Claude Code on the web environment with a restricted network policy, this
+host needs to be added to the environment's Custom network access allowlist
+(with "Also include default list of common package managers" checked) —
+see https://code.claude.com/docs/en/cloud-environments#network-access.
