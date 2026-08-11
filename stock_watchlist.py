@@ -26,32 +26,33 @@ from indicators import (
 
 WATCHLIST = [
     # original tech/growth watchlist
-    "ISRG", "AAPL", "AMZN", "GOOGL", "META", "MSFT", "NET", "NFLX", "SNOW", "TSLA",
-    "ZM", "ABNB", "ADBE", "ADSK", "DOCU", "CRM", "DASH", "HOOD", "LYFT", "MDB",
-    "NTNX", "OKTA", "RBLX", "PYPL", "RDDT", "SE", "SNAP", "SPOT", "XYZ", "STNE",
-    "TWLO", "TTWO", "TDOC", "UPST",
+    "ISRG", "AAPL", "AMZN", "GOOGL", "META", "MSFT", "NET", "NFLX",
+    "SNOW", "TSLA", "ZM", "ABNB", "ADBE", "ADSK", "DOCU", "CRM",
+    "DASH", "HOOD", "MDB", "NTNX", "OKTA", "RBLX", "PYPL", "RDDT",
+    "SE", "SPOT", "XYZ", "TWLO", "TTWO",
     # software / internet
-    "DDOG", "CRWD", "UBER", "PLTR", "DUOL", "TEM", "BBAI", "APP", "GCT", "SHOP",
-    "CART", "CRCL", "U", "RUM", "ORCL", "AUR", "COIN", "EBAY", "NOW", "PANW",
-    "CPNG", "TTD", "IONQ",
+    "DDOG", "CRWD", "UBER", "PLTR", "APP", "SHOP", "CART", "CRCL",
+    "U", "ORCL", "AUR", "COIN", "EBAY", "NOW", "PANW", "CPNG",
+    "IONQ",
     # semiconductors / hardware
-    "AMD", "INTC", "KEYS", "KLAC", "MU", "NVDA", "SMCI", "TSM", "AMAT", "ASML",
-    "AVGO", "ARM", "QCOM", "MRVL", "KULR", "ALAB", "SNDK", "LITE", "WDC", "COHR",
-    "LRCX", "GLW", "SKM", "SKYT", "UMC", "CIEN", "MXL", "STX", "LWLG", "VPG",
-    "CRDO", "DELL",
+    "AMD", "INTC", "KEYS", "KLAC", "MU", "NVDA", "SMCI", "TSM",
+    "AMAT", "ASML", "AVGO", "ARM", "QCOM", "MRVL", "ALAB", "SNDK",
+    "LITE", "WDC", "COHR", "LRCX", "GLW", "SKM", "UMC", "CIEN",
+    "STX", "CRDO", "DELL",
     # healthcare / pharma
-    "ABBV", "JNJ", "LLY", "MRK", "MRNA", "NVO", "PFE", "SDGR", "GILD", "VKTX",
-    "HIMS", "RXRX", "UNH", "CBLL", "CRSP", "AMGN", "GH", "NNOX", "RXST", "RVMD",
-    "INCY", "BNTX",
+    "ABBV", "JNJ", "LLY", "MRK", "MRNA", "NVO", "PFE", "GILD",
+    "UNH", "AMGN", "GH", "RVMD", "INCY", "BNTX",
     # airlines / consumer / china
-    "AAL", "BA", "CCL", "DAL", "UAL", "NCLH", "ALK", "WMT", "CMG", "COST", "DIS",
-    "KO", "MCD", "T", "LULU", "ULTA", "NKE", "SBUX", "TGT", "CHWY", "PLNT", "CELH",
-    "RSG", "SG", "BABA", "BIDU", "BILI", "NTES", "PDD", "XPEV", "NIO", "HDL",
+    "BA", "CCL", "DAL", "UAL", "WMT", "CMG", "COST", "DIS",
+    "KO", "MCD", "T", "LULU", "ULTA", "NKE", "SBUX", "TGT",
+    "RSG", "BABA", "BIDU", "NTES", "PDD", "XPEV", "NIO",
     # financials / energy & minerals
-    "AXP", "JPM", "KNSL", "BAC", "FSLR", "FCX", "OXY", "RIO", "BHP", "TRGP", "VST",
-    "OKLO", "DUK", "GEV", "NNE", "CLF", "MP", "USAR", "AEP", "LYSDY", "PLUG",
-    "FEAM", "BKR", "CAT", "B", "XOM", "NEM", "ALB", "BE", "DNN", "CEG", "NEE",
-    "SCCO",
+    "AXP", "JPM", "BAC", "FSLR", "FCX", "OXY", "RIO", "BHP",
+    "TRGP", "VST", "DUK", "GEV", "AEP", "LYSDY", "BKR", "CAT",
+    "B", "XOM", "NEM", "ALB", "BE", "CEG", "NEE", "SCCO",
+    # space / defense / industrials (added 2026-08-11, market-cap filtered)
+    "NBIS", "CRWV", "ASTS", "IREN", "LMT", "RKLB", "AMRZ", "CLS",
+    "ATI", "AES",
 ]
 ALERT_THRESHOLD_PCT = 2.0
 

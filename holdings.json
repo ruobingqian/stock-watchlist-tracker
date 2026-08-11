@@ -8,21 +8,9 @@
       "entry_price": 848.1300048828125,
       "entry_date": "2026-08-05"
     },
-    "NNOX": {
-      "entry_price": 1.6699999570846558,
-      "entry_date": "2026-05-19"
-    },
     "COST": {
       "entry_price": 945.739990234375,
       "entry_date": "2026-07-31"
-    },
-    "BILI": {
-      "entry_price": 17.020000457763672,
-      "entry_date": "2026-07-01"
-    },
-    "KNSL": {
-      "entry_price": 302.7200012207031,
-      "entry_date": "2026-05-12"
     },
     "DUK": {
       "entry_price": 122.38999938964844,
@@ -40,10 +28,6 @@
       "entry_price": 67.05000305175781,
       "entry_date": "2026-08-10"
     },
-    "NNE": {
-      "entry_price": 18.56999969482422,
-      "entry_date": "2026-08-10"
-    },
     "META": {
       "entry_price": 594.9199829101562,
       "entry_date": "2026-08-10"
@@ -52,15 +36,62 @@
       "entry_price": 6.980000019073486,
       "entry_date": "2026-08-10"
     },
-    "SG": {
-      "entry_price": 5.449999809265137,
-      "entry_date": "2026-08-10"
-    },
     "BIDU": {
       "entry_price": 109.5,
       "entry_date": "2026-08-10"
     }
   },
-  "trade_log": [],
+  "trade_log": [
+    {
+      "symbol": "NNOX",
+      "entry_price": 1.6699999570846558,
+      "entry_date": "2026-05-19",
+      "exit_price": 1.065000057220459,
+      "exit_date": "2026-08-11",
+      "return_pct": -36.23,
+      "held_days": 84,
+      "reason": "below_market_cap_threshold"
+    },
+    {
+      "symbol": "SG",
+      "entry_price": 5.449999809265137,
+      "entry_date": "2026-08-10",
+      "exit_price": 5.449999809265137,
+      "exit_date": "2026-08-11",
+      "return_pct": 0.0,
+      "held_days": 1,
+      "reason": "below_market_cap_threshold"
+    },
+    {
+      "symbol": "NNE",
+      "entry_price": 18.56999969482422,
+      "entry_date": "2026-08-10",
+      "exit_price": 18.56999969482422,
+      "exit_date": "2026-08-11",
+      "return_pct": 0.0,
+      "held_days": 1,
+      "reason": "below_market_cap_threshold"
+    },
+    {
+      "symbol": "BILI",
+      "entry_price": 17.020000457763672,
+      "entry_date": "2026-07-01",
+      "exit_price": 18.989999771118164,
+      "exit_date": "2026-08-11",
+      "return_pct": 11.57,
+      "held_days": 41,
+      "reason": "below_market_cap_threshold"
+    },
+    {
+      "symbol": "KNSL",
+      "entry_price": 302.7200012207031,
+      "entry_date": "2026-05-12",
+      "exit_price": 368.6000061035156,
+      "exit_date": "2026-08-11",
+      "return_pct": 21.76,
+      "held_days": 91,
+      "reason": "below_market_cap_threshold"
+    }
+  ],
   "last_run": "2026-08-11 00:34 EDT"
 }

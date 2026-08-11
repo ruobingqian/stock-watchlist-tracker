@@ -60,11 +60,38 @@ Report the summary directly in chat (no file output needed): price and %
 change per ticker, and call out anything that crossed the alert threshold.
 
 ## Watchlist
-176 tickers from the user's TradingView watchlist, grouped by sector as
+144 tickers from the user's TradingView watchlist, grouped by sector as
 commented in `stock_watchlist.py` (software/growth, semis, healthcare,
-airlines/consumer/China, financials/energy) — edit `WATCHLIST` there to add
-or remove tickers. SpaceX ("SPCX" in the user's TradingView UI) is
-intentionally excluded — it's a private company with no public market data.
+airlines/consumer/China, financials/energy, space/defense/industrials) —
+edit `WATCHLIST` there to add or remove tickers. SpaceX ("SPCX" in the
+user's TradingView UI) is intentionally excluded — it's a private company
+with no public market data.
+
+**Market cap floor**: as of 2026-08-11, the watchlist is filtered to
+companies with market cap >= $10B (a one-time cleanup pass, not an ongoing
+daily check - a name's market cap can drift below $10B later without
+getting re-filtered automatically). 30 new tickers were added from an
+updated TradingView screenshot; only 10 survived the filter (NBIS, CRWV,
+ASTS, IREN, LMT, RKLB, AMRZ, CLS, ATI, AES). Across the combined list, 55
+tickers were removed for being under $10B, plus 3 ETFs/funds excluded on
+principle (PPLT, XSW, AIPO - "market cap" doesn't apply the same way to a
+fund, and this watchlist/strategy is built for single-stock signals), plus
+4 tickers that don't resolve to any Yahoo Finance quote at all (VCX, SATS,
+SSSS, SIVE - skipped pending the user providing correct symbols). Market
+cap data comes from `query1.finance.yahoo.com/v7/finance/quote` (needs a
+session cookie + crumb from `fc.yahoo.com` /
+`query1.finance.yahoo.com/v1/test/getcrumb` first - unlike the chart
+endpoint, this one 401s without it). A handful of clearly-large, well-known
+tickers (CRM, SE, MU, WDC, DAL, TGT, NIO, B) came back with `marketCap:
+null` from that endpoint despite resolving fine otherwise - treated as
+passing the filter rather than incorrectly dropped, since Yahoo's data gap
+there is obviously wrong, not a reflection of actual size.
+
+Applying this filter retroactively force-closed 5 then-current holdings
+that were under $10B (NNOX, SG, NNE, BILI, KNSL) at their 2026-08-11 price,
+logged to `trade_log` with reason `below_market_cap_threshold` - this was
+an explicit user choice (force-close, not grandfather-in) made when asked,
+not a default assumption.
 
 ## Backtesting & strategy (backtest.py)
 Combines the three indicators into one weighted long-only mean-reversion
