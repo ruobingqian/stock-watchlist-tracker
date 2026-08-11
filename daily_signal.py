@@ -32,7 +32,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS_PATH = os.path.join(HERE, "oos_best_params.json")
 HOLDINGS_PATH = os.path.join(HERE, "holdings.json")
 
-MAX_HOLD_DAYS = 90  # ~3 months - positions are force-closed past this age regardless of the sell threshold
+MAX_HOLD_DAYS = 90  # ~3 months - only affects which positions the INITIAL holding set includes
+                    # (bootstrap skips buy signals older than this). Once a position is bootstrapped
+                    # or bought, it's held indefinitely until a genuine sell signal - no forced exit.
 
 
 def parse_date(s: str) -> date:
@@ -146,18 +148,16 @@ def main():
         else:
             unrealized_pct = (price / pos["entry_price"] - 1) * 100
             held_days = (parse_date(bar_date) - parse_date(pos["entry_date"])).days
-            expired = held_days > MAX_HOLD_DAYS
-            if not bootstrapped and (expired or score <= sell_th):
-                reason = "max_hold_expired" if expired else "sell_signal"
+            if not bootstrapped and score <= sell_th:
                 sells.append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "exit_price": price, "exit_date": bar_date, "return_pct": round(unrealized_pct, 2),
-                    "held_days": held_days, "reason": reason,
+                    "held_days": held_days,
                 })
                 state["trade_log"].append({
                     "symbol": symbol, "entry_price": pos["entry_price"], "entry_date": pos["entry_date"],
                     "exit_price": price, "exit_date": bar_date, "return_pct": round(unrealized_pct, 2),
-                    "held_days": held_days, "reason": reason,
+                    "held_days": held_days,
                 })
                 del positions[symbol]
             else:
@@ -183,11 +183,11 @@ def main():
         for s in sells:
             print(
                 f"  {s['symbol']:<6} exited @ ${s['exit_price']:.2f}  return={s['return_pct']:+.2f}%  "
-                f"(held {s['held_days']}d since {s['entry_date']}, reason={s['reason']})"
+                f"(held {s['held_days']}d since {s['entry_date']})"
             )
 
     holding_updates.sort(key=lambda h: h["unrealized_pct"], reverse=True)
-    print(f"\nCurrent holdings ({len(holding_updates)}, max hold {MAX_HOLD_DAYS}d):")
+    print(f"\nCurrent holdings ({len(holding_updates)}):")
     for h in holding_updates:
         print(
             f"  {h['symbol']:<6} ${h['entry_price']:.2f} -> ${h['current_price']:.2f}  "
