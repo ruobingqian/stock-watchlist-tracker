@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Standalone screener: scan WATCHLIST for tickers whose latest confirmed
-close is at or below their Keltner Channel lower band, and render a 4-panel
-chart (same as holding_charts.py) for each hit. Does this one thing only -
-no strategy state, no holdings.json, no buy/sell logic.
+close is at or below their Keltner Channel lower band - both a close sitting
+right at the band and one that has already broken clearly below it count as
+hits (the check is close <= lower_band, not an exact-touch tolerance) - and
+render a 4-panel chart (same as holding_charts.py) for each hit. Does this
+one thing only - no strategy state, no holdings.json, no buy/sell logic.
 
 Usage: python3 kc_bottom_screener.py [output_dir]
 """
@@ -19,6 +21,8 @@ from stock_watchlist import WATCHLIST
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS_PATH = os.path.join(HERE, "oos_best_params.json")
+
+AT_BAND_TOLERANCE_PCT = 1.0  # within this % of the band counts as "AT"; further under counts as "BELOW"
 
 
 def main():
@@ -59,15 +63,18 @@ def main():
     print(f"{len(hits)} of {len(WATCHLIST)} tickers at/below the lower Keltner band:\n")
     for h in hits:
         pct_vs_band = (h["close"] - h["lower"]) / h["lower"] * 100
-        print(f"  {h['symbol']:<6} close ${h['close']:.2f}  lower band ${h['lower']:.2f}  ({pct_vs_band:+.2f}% vs band)")
+        tag = "AT BAND" if pct_vs_band >= -AT_BAND_TOLERANCE_PCT else "BELOW BAND"
+        print(f"  {h['symbol']:<6} close ${h['close']:.2f}  lower band ${h['lower']:.2f}  ({pct_vs_band:+.2f}% vs band)  [{tag}]")
 
     print()
     for h in hits:
+        pct_vs_band = (h["close"] - h["lower"]) / h["lower"] * 100
+        label = "KC at band" if pct_vs_band >= -AT_BAND_TOLERANCE_PCT else "KC below band"
         out_path = os.path.join(out_dir, f"{h['symbol'].lower()}_kc_bottom.png")
         try:
             chart_one(
                 h["symbol"], h["close"], h["date"], weights, buy_th, sell_th, persist_days,
-                out_path, marker_label="KC bottom hit",
+                out_path, marker_label=label,
             )
             print(out_path)
         except Exception as exc:
