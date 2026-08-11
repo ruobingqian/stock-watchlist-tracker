@@ -146,9 +146,12 @@ python3 daily_signal.py
 - **First run ever** (no `holdings.json`): bootstraps current positions from
   the 2025-present backtest - i.e. for every ticker, "is the strategy
   currently holding it as of today per the historical signal history, and
-  since when/at what price." This establishes a realistic starting point
-  instead of pretending the strategy starts from all-cash today. A
-  bootstrap run reports the starting positions, not new buy/sell signals.
+  since when/at what price." **Only positions whose buy signal is within
+  the last `MAX_HOLD_DAYS` (90 calendar days / ~3 months) are included** -
+  this was a user request to start with a smaller, more recent set of
+  holdings rather than everything the strategy has ever bought and never
+  sold. This filter applies ONLY at bootstrap time. A bootstrap run reports
+  the starting positions, not new buy/sell signals.
 - **Every run after that**: fetches each ticker's latest 2 years of daily
   bars (a fresh fetch, not `.data_cache_oos.json`, since it needs today's
   bar), computes today's confirmed score, and compares it against the
@@ -156,20 +159,18 @@ python3 daily_signal.py
   - flat + score >= buy_threshold -> **BUY** (recorded at today's close;
     unlike backtest.py's next-bar-open fill, this is a live daily tool with
     no "tomorrow" to fill at, so today's close is the practical fill price)
-  - long + score <= sell_threshold -> **SELL**, reason `sell_signal`
-  - long + held longer than `MAX_HOLD_DAYS` (90 calendar days / ~3 months,
-    a user-requested cap - not part of `oos_best_params.json`'s fitted
-    parameters) -> **SELL** regardless of score, reason `max_hold_expired`.
-    This checks before the score-based sell, so a stale position always
-    exits even if its score never crosses `sell_threshold`
-  - long + no sell signal and not stale -> reported as an unrealized-return
-    holding
+  - long + score <= sell_threshold -> **SELL**
+  - long + no sell signal -> reported as an unrealized-return holding,
+    **held indefinitely** - there is no forced time-based exit once a
+    position is open (this was tried and reverted; the 90-day cap only
+    shapes what the *initial* holding set looks like, see above)
   - flat + no buy signal -> not reported (nothing happened)
-  - Adding this cap on 2026-08-11 immediately force-closed 100 of the 111
-    bootstrapped positions that were already older than 90 days (median
-    prior hold was ~460 trading days, so most of the book was stale by
-    construction) - expect a similar one-time cleanup if `MAX_HOLD_DAYS` is
-    ever tightened further
+  - Bootstrapping on 2026-08-11 with this filter kept 11 of 111 otherwise-
+    open positions (median prior hold was ~460 trading days, so most of
+    the historical book was older than 90 days); the very next run then
+    opened 4 more fresh positions (META, AUR, SG, BIDU) whose *current*
+    score independently qualified as a buy today, which is expected and
+    fine - the 90-day filter only ever applies to the one-time bootstrap
 - **State persistence is critical**: `holdings.json` must be committed and
   pushed to the repo after every run. A scheduled trigger may fire into a
   fresh session/container each time - anything not in git is lost. Do not
