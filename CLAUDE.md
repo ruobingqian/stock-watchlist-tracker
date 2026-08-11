@@ -60,8 +60,46 @@ Report the summary directly in chat (no file output needed): price and %
 change per ticker, and call out anything that crossed the alert threshold.
 
 ## Watchlist
-META, ISRG, GOOGL, AAPL, SPY, QQQ — edit `WATCHLIST` in `stock_watchlist.py`
-to add or remove tickers.
+34 tickers from the user's TradingView watchlist (ISRG, AAPL, AMZN, GOOGL,
+META, MSFT, NET, NFLX, SNOW, TSLA, ZM, ABNB, ADBE, ADSK, DOCU, CRM, DASH,
+HOOD, LYFT, MDB, NTNX, OKTA, RBLX, PYPL, RDDT, SE, SNAP, SPOT, XYZ, STNE,
+TWLO, TTWO, TDOC, UPST) — edit `WATCHLIST` in `stock_watchlist.py` to add or
+remove tickers. SpaceX ("SPCX" in the user's TradingView UI) is intentionally
+excluded — it's a private company with no public market data.
+
+## Backtesting & strategy (backtest.py)
+Combines the three indicators into one weighted long-only mean-reversion
+score: `score = w_kc*kc + w_rsi_div*rsi_div + w_kdj*kdj`, each component
+roughly in [-1.5, 1.5] (KC/KDJ: distance from band/50 as %B-style oversold
+vs. overbought; RSI divergence: +1/-1 for `persist_days` days after a
+confirmed pivot). Buys when flat and score >= buy_threshold; sells to cash
+when long and score <= sell_threshold. Trades fill at the next bar's open
+(no lookahead) and a divergence only enters the score `RSI_PIVOT_RIGHT`
+days after its pivot bar, matching when it's actually confirmable.
+
+```bash
+python3 backtest.py                                    # optimize (median-Sharpe objective), save to best_params.json
+python3 backtest.py --iters 10000 --min-coverage 0.6 --out best_params_active.json  # broader-coverage variant
+python3 backtest.py --show --out best_params_selective.json   # report on a saved params file without re-optimizing
+```
+
+Two saved variants from the 34-ticker/2-year backtest as of this writing:
+- `best_params_selective.json` (default `--min-coverage 1/3`): few, high-conviction
+  trades (11/34 tickers traded, 46 pooled trades, 67% pooled win rate,
+  median Sharpe 1.28). Requires strong agreement across all three indicators.
+- `best_params_active.json` (`--min-coverage 0.6`): trades more of the
+  watchlist (25/34 tickers, 75 pooled trades, 69% pooled win rate, median
+  Sharpe 0.87) with lower thresholds and near-zero weight on Keltner Channel.
+
+**Caveat**: this is optimized on ~1 year of data per ticker with as few as
+2-3 trades per ticker — nowhere near enough to be statistically robust on a
+per-ticker basis. Treat the results as a starting point to paper-trade or
+monitor forward, not a validated strategy. The pooled trade-level stats and
+median-Sharpe objective (both robust to single-ticker outliers) are a
+sturdier read than any individual ticker's numbers.
+
+Fetched bars are cached in `.data_cache.json` (gitignored) so repeated
+optimizer runs don't re-hit Yahoo Finance; delete it to force a refresh.
 
 ## Validation chart
 `plot_indicators.py [SYMBOL] [output.png]` renders a candlestick chart with
