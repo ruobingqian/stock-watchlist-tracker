@@ -39,7 +39,7 @@ PARAMS_PATH = os.path.join(HERE, "oos_best_params.json")
 HOLDINGS_PATH = os.path.join(HERE, "holdings.json")
 
 
-def chart_one(symbol: str, entry_price: float, entry_date: str, weights, buy_th: float, sell_th: float, persist_days: int, out_path: str):
+def chart_one(symbol: str, entry_price: float, entry_date: str, weights, buy_th: float, sell_th: float, persist_days: int, out_path: str, marker_label: str = "BUY (entry)"):
     meta, bars = fetch_history(symbol, rng="2y", interval="1d")
     bars = drop_incomplete_last_bar(meta, bars)
     n = len(bars)
@@ -90,11 +90,11 @@ def chart_one(symbol: str, entry_price: float, entry_date: str, weights, buy_th:
     if entry_idx is not None:
         ax_price.scatter(entry_idx, entry_price, marker="^", color="green", s=170, zorder=5, edgecolors="black")
         ax_price.annotate(
-            "BUY (entry)", (entry_idx, entry_price), xytext=(0, -18), textcoords="offset points",
+            marker_label, (entry_idx, entry_price), xytext=(0, -18), textcoords="offset points",
             ha="center", fontsize=8, color="green", fontweight="bold",
         )
 
-    ax_price.set_title(f"{symbol} — Keltner Channel ({KC_LENGTH}, {KC_MULTIPLIER})  |  entered {entry_date} @ ${entry_price:.2f}")
+    ax_price.set_title(f"{symbol} — Keltner Channel ({KC_LENGTH}, {KC_MULTIPLIER})  |  {marker_label}: {entry_date} @ ${entry_price:.2f}")
     ax_price.set_ylabel("Price")
 
     valid = [(i, v) for i, v in enumerate(rsi_vals) if v is not None]
@@ -140,8 +140,11 @@ def chart_one(symbol: str, entry_price: float, entry_date: str, weights, buy_th:
     ax_score.set_xticklabels(tick_labels)
     ax_price.set_xlim(display_start - 1, n)
 
-    unrealized_pct = (closes[-1] / entry_price - 1) * 100
-    fig.suptitle(f"{symbol} — current holding, {unrealized_pct:+.1f}% unrealized")
+    if marker_label == "BUY (entry)":
+        unrealized_pct = (closes[-1] / entry_price - 1) * 100
+        fig.suptitle(f"{symbol} — current holding, {unrealized_pct:+.1f}% unrealized")
+    else:
+        fig.suptitle(f"{symbol} — {marker_label}")
     fig.tight_layout()
     fig.savefig(out_path, dpi=130)
     plt.close(fig)
