@@ -273,12 +273,17 @@ python3 kc_bottom_screener.py [output_dir]   # defaults to /tmp/kc_bottom_hits
 Standalone, single-purpose script - deliberately does NOT touch
 `holdings.json` or any strategy/position state, and is independent of
 `oos_best_params.json`'s buy/sell thresholds. Scans the full WATCHLIST for
-tickers whose latest confirmed close is at or below their Keltner Channel
-lower band (a much looser bar than the full weighted-score buy signal —
-this is a raw band-touch screen, not a trade signal), and renders the
-same 4-panel chart as `holding_charts.py` for each hit via
-`holding_charts.chart_one()` (reused with `marker_label="KC bottom hit"` -
-`chart_one()` takes an optional `marker_label` param, default `"BUY
+tickers whose latest confirmed close is at OR below their Keltner Channel
+lower band (`close <= lower_band` - a stock already trading well under the
+band is just as much a hit as one sitting right at it, not just an
+exact-touch tolerance; a much looser bar than the full weighted-score buy
+signal, this is a raw band-touch screen, not a trade signal). Hits within
+`AT_BAND_TOLERANCE_PCT` (1%) of the band are labeled `AT BAND`; anything
+further under is labeled `BELOW BAND`, both in the printed report and in
+each chart's title/marker, so it's unambiguous that deeper breakdowns are
+being surfaced too, not just near-touches. Renders the same 4-panel chart
+as `holding_charts.py` for each hit via `holding_charts.chart_one()`
+(reused with a `marker_label` param - `chart_one()` defaults to `"BUY
 (entry)"`, precisely so this script didn't need to duplicate the ~150-line
 chart function). Most days this finds very few hits, sometimes zero - that's
 expected, not a bug. Run daily alongside `daily_signal.py` and
