@@ -79,6 +79,10 @@
     "MRNA": {
       "entry_price": 63.650001525878906,
       "entry_date": "2026-08-13"
+    },
+    "MNST": {
+      "entry_price": 45.52000045776367,
+      "entry_date": "2026-08-17"
     }
   },
   "trade_log": [
@@ -133,7 +137,7 @@
       "reason": "below_market_cap_threshold"
     }
   ],
-  "last_run": "2026-08-17 15:00 EDT",
+  "last_run": "2026-08-17 16:12 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
