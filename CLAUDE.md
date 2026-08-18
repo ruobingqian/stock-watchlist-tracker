@@ -300,6 +300,41 @@ window — this only affects the chart's early history, not the latest values
 `stock_watchlist.py` reports, since EMA/RMA-based smoothing converges within
 a year of daily bars regardless of warm-up length.
 
+## Stock-split adjustment (fixed 2026-08-18)
+`indicators.fetch_history()` requests `events=split` from Yahoo and scales
+historical bar OHLC down (multiply by `denominator/numerator` for every
+split whose date is after that bar) so a split doesn't show up as a false
+price cliff. This was NOT always the case: Yahoo's raw `close` field isn't
+retroactively split-adjusted, so before this fix, any ticker that split
+read as a false ~(1 - 1/split_ratio) "crash" for ~26 trading days after the
+split (until Keltner's EMA/ATR fully reconverged to the new price scale).
+
+**Real-world impact discovered**: MNST's 2026-08-14 2:1 split triggered a
+live spurious BUY (score 0.772 vs 0.769 threshold) on 2026-08-17, purely
+from the artifact - recomputed with corrected data, MNST's actual score
+that day was 0.252, nowhere close to buying. The position was removed from
+`holdings.json` and logged to `trade_log` with reason
+`corrected_spurious_signal_unadjusted_split_bug` (0% return, since entry
+and correction happened at the same price).
+
+Deliberately split-only, not dividend-adjusted (i.e. NOT using Yahoo's
+`adjclose`, which bundles both) - TradingView's default chart view, which
+this repo's Keltner Channel math was pixel-validated against earlier, is
+split-adjusted but not dividend-adjusted, and mixing in dividend
+adjustment would drift the two out of sync for dividend-paying names.
+
+**Bigger open question, not yet acted on**: `oos_best_params.json` was fit
+via `backtest_oos.py` on 2021-2024 data *before* this fix existed, so any
+watchlist ticker that split during that fetch window (e.g. NVDA and AVGO
+both did 10:1 splits in 2024 - a much larger artifact than MNST's 2:1)
+could have contributed corrupted signals to the parameter search itself,
+not just to today's live check. Whether to re-run `backtest_oos.py` with
+corrected data and refit is a separate decision from this fix - ask the
+user before spending the ~10 minute re-optimization on it.
+
+Both `.data_cache.json` and `.data_cache_oos.json` (gitignored) were
+cleared when this fix landed, since they held pre-fix unadjusted bars.
+
 ## Known environment constraint
 `query1.finance.yahoo.com` must be reachable from wherever this runs. In a
 Claude Code on the web environment with a restricted network policy, this

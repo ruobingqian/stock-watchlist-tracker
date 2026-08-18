@@ -79,10 +79,6 @@
     "MRNA": {
       "entry_price": 63.650001525878906,
       "entry_date": "2026-08-13"
-    },
-    "MNST": {
-      "entry_price": 45.52000045776367,
-      "entry_date": "2026-08-17"
     }
   },
   "trade_log": [
@@ -135,6 +131,16 @@
       "return_pct": 21.76,
       "held_days": 91,
       "reason": "below_market_cap_threshold"
+    },
+    {
+      "symbol": "MNST",
+      "entry_price": 45.52000045776367,
+      "entry_date": "2026-08-17",
+      "exit_price": 45.52000045776367,
+      "exit_date": "2026-08-17",
+      "return_pct": 0.0,
+      "held_days": 0,
+      "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
   "last_run": "2026-08-17 16:12 EDT",

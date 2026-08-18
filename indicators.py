@@ -35,23 +35,49 @@ def fetch_history(
     period2: int | None = None,
 ):
     """period1/period2 (unix seconds) give an exact date range and take
-    precedence over rng when both would otherwise apply."""
+    precedence over rng when both would otherwise apply.
+
+    Bars are split-adjusted (not dividend-adjusted, to match TradingView's
+    default chart view, which the Keltner Channel math here was validated
+    against). Yahoo's raw `close` field is NOT retroactively adjusted for
+    splits, so without this a stock split shows up as a false price cliff -
+    e.g. MNST's 2026-08-14 2:1 split made $90 bars turn into $46 bars
+    overnight with nothing in between, which the Keltner Channel then reads
+    as a ~35% one-day crash and fires spurious buy signals. `events=split`
+    requests Yahoo's split event data so historical bars before each split
+    can be scaled down to match the post-split price scale.
+    """
     params = {"period1": period1, "period2": period2, "interval": interval} if period1 is not None else {
         "range": rng,
         "interval": interval,
     }
+    params["events"] = "split"
     resp = requests.get(CHART_URL.format(symbol=symbol), headers=HEADERS, params=params, timeout=15)
     resp.raise_for_status()
     result = resp.json()["chart"]["result"][0]
     meta = result["meta"]
     quote = result["indicators"]["quote"][0]
+
+    splits = []
+    for s in result.get("events", {}).get("splits", {}).values():
+        num, den = s.get("numerator"), s.get("denominator")
+        if num and den:
+            splits.append((s["date"], den / num))
+
     bars = []
     for t, o, h, l, c, v in zip(
         result["timestamp"], quote["open"], quote["high"], quote["low"], quote["close"], quote["volume"]
     ):
         if None in (o, h, l, c):
             continue
-        bars.append({"time": t, "open": o, "high": h, "low": l, "close": c, "volume": v})
+        factor = 1.0
+        for split_time, ratio in splits:
+            if t < split_time:
+                factor *= ratio
+        bars.append({
+            "time": t, "open": o * factor, "high": h * factor, "low": l * factor,
+            "close": c * factor, "volume": v,
+        })
     return meta, bars
 
 
