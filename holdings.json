@@ -87,6 +87,10 @@
     "AZN": {
       "entry_price": 165.97000122070312,
       "entry_date": "2026-08-21"
+    },
+    "MCD": {
+      "entry_price": 272.489990234375,
+      "entry_date": "2026-08-24"
     }
   },
   "trade_log": [
@@ -151,7 +155,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-08-21 16:12 EDT",
+  "last_run": "2026-08-24 16:14 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
