@@ -91,6 +91,14 @@
     "MCD": {
       "entry_price": 272.489990234375,
       "entry_date": "2026-08-24"
+    },
+    "APP": {
+      "entry_price": 311.739990234375,
+      "entry_date": "2026-09-01"
+    },
+    "FER": {
+      "entry_price": 57.70000076293945,
+      "entry_date": "2026-09-01"
     }
   },
   "trade_log": [
@@ -155,7 +163,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-08-31 16:11 EDT",
+  "last_run": "2026-09-01 16:12 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
