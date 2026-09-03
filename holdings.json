@@ -103,6 +103,10 @@
     "WDC": {
       "entry_price": 448.8999938964844,
       "entry_date": "2026-09-02"
+    },
+    "NKE": {
+      "entry_price": 38.75,
+      "entry_date": "2026-09-03"
     }
   },
   "trade_log": [
@@ -167,7 +171,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-09-02 16:10 EDT",
+  "last_run": "2026-09-03 16:10 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
