@@ -107,6 +107,14 @@
     "NKE": {
       "entry_price": 38.75,
       "entry_date": "2026-09-03"
+    },
+    "EXC": {
+      "entry_price": 43.95000076293945,
+      "entry_date": "2026-09-08"
+    },
+    "ROST": {
+      "entry_price": 229.30999755859375,
+      "entry_date": "2026-09-08"
     }
   },
   "trade_log": [
@@ -171,7 +179,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-09-07 16:10 EDT",
+  "last_run": "2026-09-08 16:10 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
