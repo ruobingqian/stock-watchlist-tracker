@@ -131,6 +131,18 @@
     "MCHP": {
       "entry_price": 73.01000213623047,
       "entry_date": "2026-09-09"
+    },
+    "GLW": {
+      "entry_price": 159.69000244140625,
+      "entry_date": "2026-09-22"
+    },
+    "RKLB": {
+      "entry_price": 71.9800033569336,
+      "entry_date": "2026-09-22"
+    },
+    "PG": {
+      "entry_price": 148.22000122070312,
+      "entry_date": "2026-09-22"
     }
   },
   "trade_log": [
@@ -195,7 +207,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-09-09 16:12 EDT",
+  "last_run": "2026-09-22 16:24 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
