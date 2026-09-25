@@ -159,6 +159,10 @@
     "CRWV": {
       "entry_price": 90.12999725341797,
       "entry_date": "2026-09-24"
+    },
+    "SHW": {
+      "entry_price": 328.9800109863281,
+      "entry_date": "2026-09-25"
     }
   },
   "trade_log": [
@@ -223,7 +227,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-09-24 16:11 EDT",
+  "last_run": "2026-09-25 16:10 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
