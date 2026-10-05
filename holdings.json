@@ -175,6 +175,10 @@
     "NTES": {
       "entry_price": 117.20999908447266,
       "entry_date": "2026-10-02"
+    },
+    "BHP": {
+      "entry_price": 86.86000061035156,
+      "entry_date": "2026-10-05"
     }
   },
   "trade_log": [
@@ -239,7 +243,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-10-02 16:11 EDT",
+  "last_run": "2026-10-05 16:13 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
