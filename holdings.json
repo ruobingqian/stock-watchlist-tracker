@@ -191,6 +191,22 @@
     "FANG": {
       "entry_price": 184.3800048828125,
       "entry_date": "2026-10-07"
+    },
+    "GOOGL": {
+      "entry_price": 348.2900085449219,
+      "entry_date": "2026-10-08"
+    },
+    "AXP": {
+      "entry_price": 307.9800109863281,
+      "entry_date": "2026-10-08"
+    },
+    "CEG": {
+      "entry_price": 285.07000732421875,
+      "entry_date": "2026-10-08"
+    },
+    "GOOG": {
+      "entry_price": 344.8599853515625,
+      "entry_date": "2026-10-08"
     }
   },
   "trade_log": [
@@ -255,7 +271,7 @@
       "reason": "corrected_spurious_signal_unadjusted_split_bug"
     }
   ],
-  "last_run": "2026-10-07 16:11 EDT",
+  "last_run": "2026-10-08 16:11 EDT",
   "seen_tickers": [
     "AAPL",
     "ABBV",
