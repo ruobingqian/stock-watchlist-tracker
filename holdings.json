@@ -211,6 +211,26 @@
     "PDD": {
       "entry_price": 81.3499984741211,
       "entry_date": "2026-10-09"
+    },
+    "T": {
+      "entry_price": 22.260000228881836,
+      "entry_date": "2026-11-11"
+    },
+    "BAC": {
+      "entry_price": 50.66999816894531,
+      "entry_date": "2026-11-11"
+    },
+    "BKNG": {
+      "entry_price": 160.2100067138672,
+      "entry_date": "2026-11-11"
+    },
+    "ODFL": {
+      "entry_price": 170.5,
+      "entry_date": "2026-11-11"
+    },
+    "PCAR": {
+      "entry_price": 108.12999725341797,
+      "entry_date": "2026-11-11"
     }
   },
   "trade_log": [
@@ -284,7 +304,7 @@
       "held_days": 57
     }
   ],
-  "last_run": "2026-10-09 16:11 EDT",
+  "last_run": "2026-11-12 15:14 EST",
   "seen_tickers": [
     "AAPL",
     "ABBV",
